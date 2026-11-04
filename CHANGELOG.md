@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5 (experimental fork)
+
+- DTS attaches on boot again. `dts-off` is no longer read. DTS passthrough was already verified, and the earlier audio-service exits were not a reason to leave the hook off.
+
 ## 0.2.4 (experimental fork)
 
 - Karat no longer forces HDMI bypass. Bypass made MS12 refuse Prime's Dolby stream, the tunnel then rejected Dolby MAT, and Tomorrow's War exited to a black screen.
