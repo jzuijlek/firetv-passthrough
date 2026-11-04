@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3 (experimental fork)
+
+- The Karat refresh-rate listener now reads the system log buffer. `AudioOutputFormatManager` writes `hdmi_format=5` there, so v0.2.2 never saw the rate-change and left bypass off.
+
 ## 0.2.2 (experimental fork)
 
 - Karat restores HDMI bypass when Fire OS writes `hdmi_format=5` during a refresh-rate change, using the existing bounded checks.

@@ -1,6 +1,6 @@
 id=firetv_passthrough
 name=Fire TV AV (Gazelle / Karat)
-version=0.2.2-experimental
-versionCode=7
+version=0.2.3-experimental
+versionCode=8
 author=signde
 description=Fire TV AV 0.2.1 plus a Karat refresh-rate bypass restore. Experimental fork.

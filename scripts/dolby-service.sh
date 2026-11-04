@@ -119,7 +119,9 @@ while enabled; do
     # A replay may produce one harmless bounded reconciliation, not idle polling.
     # An open failure restarts the HAL only when it arrives in the two-second
     # burst after an hdmi_format=5 line, so a later tunnel probe cannot.
-    /system/bin/logcat -b events -b main -v brief -T 1 \
+    # AudioOutputFormatManager is system_server, so its lines are in the system
+    # buffer. main and events do not carry the hdmi_format=5 write.
+    /system/bin/logcat -b events -b main -b system -v brief -T 1 \
         power_screen_state:I boot_progress_enable_screen:I AudioService:E \
         AudioOutputFormatManager:I APM_AudioPolicyManager:W AudioALSAStreamManager:E \
         '*:S' > "$FIFO" 2>> "$MODDIR/dolby.log" 9>&- &
