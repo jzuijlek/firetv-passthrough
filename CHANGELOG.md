@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.4 (experimental fork)
+
+- Karat no longer forces HDMI bypass. Bypass made MS12 refuse Prime's Dolby stream, the tunnel then rejected Dolby MAT, and Tomorrow's War exited to a black screen.
+- A PCM HDMI open failure can still restore bypass. An Atmos open that hits the bypass refusal or a MAT rejection sets Fire OS mode and holds it.
+- DTS attachment stays off when `dts-off` is present. On this stick the hook exited the audio service four times and latched itself.
+
 ## 0.2.3 (experimental fork)
 
 - The Karat refresh-rate listener now reads the system log buffer. `AudioOutputFormatManager` writes `hdmi_format=5` there, so v0.2.2 never saw the rate-change and left bypass off.

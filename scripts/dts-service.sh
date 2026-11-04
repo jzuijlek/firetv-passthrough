@@ -45,6 +45,11 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 0' HUP INT TERM
 MODULE_VERSION=$(sed -n 's/^version=//p' "$MODDIR/module.prop")
+if [ -e "$MODDIR/dts-off" ]; then
+    log "DTS attachment is disabled on this device."
+    status "DTS_OFF"
+    exit 0
+fi
 status "WAITING_FOR_BOOT"
 verify || { log "Unsupported firmware or corrupt payload; refusing attachment."; status "UNSUPPORTED"; exit 1; }
 [ ! -e "$MODDIR/blocked" ] || { log "Restart guard is latched; inspect logs and remove blocked only after diagnosing."; status "BLOCKED"; exit 1; }

@@ -124,17 +124,31 @@ while enabled; do
     /system/bin/logcat -b events -b main -b system -v brief -T 1 \
         power_screen_state:I boot_progress_enable_screen:I AudioService:E \
         AudioOutputFormatManager:I APM_AudioPolicyManager:W AudioALSAStreamManager:E \
+        AudioTunnelStreamOut:E MS12Server:W \
         '*:S' > "$FIFO" 2>> "$MODDIR/dolby.log" 9>&- &
     EVENT_PID=$!
     log "Recovery listener started; no periodic HDMI checks."
     while IFS= read -r event; do
         enabled || break
         case "$event" in
+            *'ByPass don'\''t use Dolby StreamOut'*|*'Invalid format 0x24000000'*|*'Invalid format 0x24000001'*)
+                # Prime asked for Atmos while bypass had disabled MS12. Hold
+                # Fire OS mode 5 so the next open can use the Dolby stream.
+                date +%s > "$MODDIR/dolby-hold"
+                log "Atmos open needs the Dolby decoder. Setting hdmi_format=5."
+                timeout 5 /system/bin/aparam set 0 hdmi_format=5 >> "$MODDIR/dolby.log" 2>&1
+                mode=$(read_mode)
+                log "Dolby hold readback hdmi_format='${mode:-unset}'."
+                ;;
             *'hdmi_format=5;'*)
                 failed_open=0
+                mat_rejected=0
                 extra_reason=
                 while IFS= read -r -t 2 extra; do
                     case "$extra" in
+                        *'ByPass don'\''t use Dolby StreamOut'*|*'Invalid format 0x24000000'*|*'Invalid format 0x24000001'*)
+                            mat_rejected=1
+                            ;;
                         *'could not open output for device 400'*|*'TunnelStreamOut->set() fail'*)
                             failed_open=1
                             ;;
@@ -145,9 +159,18 @@ while enabled; do
                             ;;
                     esac
                 done
-                reconcile DisplayReset || break
-                if [ "$failed_open" = 1 ]; then
+                if [ "$mat_rejected" = 1 ]; then
+                    date +%s > "$MODDIR/dolby-hold"
+                    log "Atmos open needs the Dolby decoder. Setting hdmi_format=5."
+                    timeout 5 /system/bin/aparam set 0 hdmi_format=5 >> "$MODDIR/dolby.log" 2>&1
+                else
+                    reconcile DisplayReset || break
+                fi
+                if [ "$failed_open" = 1 ] && [ "$DEVICE" != karat ]; then
                     recover_failed_open || break
+                fi
+                if [ "$failed_open" = 1 ] && [ "$DEVICE" = karat ] && [ "$mat_rejected" != 1 ]; then
+                    reconcile PcmRecover || break
                 fi
                 if [ -n "$extra_reason" ]; then
                     reconcile "$extra_reason" || break
