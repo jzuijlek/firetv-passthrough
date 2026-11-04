@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.2 (experimental fork)
+
+- Karat restores HDMI bypass when Fire OS writes `hdmi_format=5` during a refresh-rate change, using the existing bounded checks.
+- If that change logs an HDMI open failure for output 400 and no audio output is active, restart the audio HAL once and reapply bypass. An active output, or a restart within 180 seconds, suppresses it.
+- Gazelle still rewrites mode 5 inside the HAL. The log watch is a backstop there.
+- Based on signde's Fire TV AV v0.2.1. DTS, FEL, firmware profiles, and the Frida runtime are unchanged. The refresh-rate change is by Jonathan van Zuijlekom.
+
 ## 0.2.1 (experimental)
 
 - Fixes a Gazelle regression in the TrueHD microphone correction: temporary audio outputs could trigger DSP errors and sustained high CPU usage during streaming playback.

@@ -26,4 +26,5 @@ disable_legacy_modules /data/adb || abort "Could not disable legacy modules. Ins
 ui_print "Verified $FIRMWARE_PROFILE. Installing Dolby and DTS passthrough together."
 ui_print "Old Dolby/DTS/video modules, if present, are disabled. Reboot before playback."
 ui_print "Gazelle FEL requires a separately verified kernel; Karat is audio-only."
+ui_print "Karat restores HDMI bypass after a refresh-rate change."
 ui_print "Allow about a minute after reboot. Disable/remove and reboot to undo."
